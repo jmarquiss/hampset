@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hampset-admin",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  // TODO: replace example.com with your domain, then protect it with a Cloudflare Access
+  // application (see the README).
+  "routes": [{ "pattern": "admin.example.com", "custom_domain": true }],
+  // Only reachable through the custom domain, so every request passes through Cloudflare Access.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hampset",
+      // TODO: the same id as apps/app/wrangler.jsonc. Migrations are applied from apps/app.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+    },
+  ],
+  "vars": {
+    // TODO: replace example.com with your domain. Used to build invite links.
+    "APP_URL": "https://app.example.com",
+    // TODO: from Zero Trust → Access → Applications → your admin app.
+    "ACCESS_TEAM_DOMAIN": "https://your-team.cloudflareaccess.com",
+    "ACCESS_AUD": "",
+    // TODO: a sender on a domain verified in Resend, e.g. "Hampset CC <noreply@example.com>".
+    "EMAIL_FROM": "",
+  },
+  "observability": { "enabled": true },
+}

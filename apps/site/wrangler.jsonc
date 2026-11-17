@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Static assets only: no Worker code runs, so requests are free and unlimited.
+  "name": "hampset-site",
+  "compatibility_date": "2026-11-01",
+  // TODO: replace example.com with your domain.
+  "routes": [
+    { "pattern": "example.com", "custom_domain": true },
+    { "pattern": "www.example.com", "custom_domain": true },
+  ],
+  // One canonical address for search engines.
+  "workers_dev": false,
+  "assets": {
+    "directory": "./build/client",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+}

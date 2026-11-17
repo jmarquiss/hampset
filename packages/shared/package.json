@@ -1,0 +1,23 @@
+{
+  "name": "@club/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./club": "./src/club.ts",
+    "./api": "./src/api.ts",
+    "./ui": "./src/ui.tsx",
+    "./theme.css": "./src/theme.css",
+    "./logo/*": "./src/logo/*"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "react": "^19.3.1",
+    "typescript": "~6.0.0"
+  }
+}

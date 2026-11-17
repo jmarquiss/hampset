@@ -1,0 +1,31 @@
+/*
+ * Club theme shared by the public site, the members app and the admin app.
+ * Change a colour here and every app picks it up on the next build. Tailwind's default palette is
+ * switched off, so components can only use these names (bg-brand, text-accent, border-line, ...).
+ */
+
+/* Lets Tailwind see the classes used by the shared components in this package. */
+@source ".";
+
+@theme {
+  --color-*: initial;
+
+  --color-white: #ffffff;
+  --color-brand: #0b1f3a; /* dark blue: headers, buttons, headings */
+  --color-brand-light: #015697; /* the badge blue; hover states */
+  --color-accent: #c5cbd3; /* light silver: highlights on dark blue */
+  --color-accent-light: #eef0f3; /* subtle silver backgrounds */
+  --color-surface: #f7f8fa; /* page background */
+  --color-line: #d9dde3; /* borders and dividers */
+  --color-ink: #1a1f29; /* body text */
+  --color-muted: #5b6472; /* secondary text */
+  --color-danger: #b42318;
+
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-ink antialiased;
+  }
+}

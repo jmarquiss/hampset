@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hampset-app",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  // Better Auth uses AsyncLocalStorage from node:async_hooks.
+  "compatibility_flags": ["nodejs_compat"],
+  // TODO: replace example.com with your domain.
+  "routes": [{ "pattern": "app.example.com", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hampset",
+      // TODO: run `pnpm --filter app exec wrangler d1 create hampset` and paste the id here and in
+      // apps/admin/wrangler.jsonc. Both Workers use the same database.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/drizzle",
+    },
+  ],
+  "vars": {
+    // TODO: replace example.com with your domain. Local dev overrides this in .dev.vars.
+    "APP_URL": "https://app.example.com",
+  },
+  "observability": { "enabled": true },
+}

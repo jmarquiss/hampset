@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "47ba946b-20e1-4f75-a64a-18f265066508",
+  "id": "b8cc5ef2-216e-4130-a136-629573f7f2d8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -129,33 +129,40 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "invite": {
-      "name": "invite",
+    "audit_log": {
+      "name": "audit_log",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": true
         },
-        "email": {
-          "name": "email",
+        "actor_email": {
+          "name": "actor_email",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "token_hash": {
-          "name": "token_hash",
+        "action": {
+          "name": "action",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "integer",
+        "target_user_id": {
+          "name": "target_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "target_email": {
+          "name": "target_email",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -169,22 +176,7 @@
           "default": "(unixepoch() * 1000)"
         }
       },
-      "indexes": {
-        "invite_email_unique": {
-          "name": "invite_email_unique",
-          "columns": [
-            "email"
-          ],
-          "isUnique": true
-        },
-        "invite_token_hash_unique": {
-          "name": "invite_token_hash_unique",
-          "columns": [
-            "token_hash"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -322,6 +314,20 @@
         "image": {
           "name": "image",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "disabled_at": {
+          "name": "disabled_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

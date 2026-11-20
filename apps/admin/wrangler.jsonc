@@ -22,13 +22,9 @@
     },
   ],
   "vars": {
-    // TODO: replace example.com with your domain. Used to build invite links.
-    "APP_URL": "https://app.example.com",
     // TODO: from Zero Trust → Access → Applications → your admin app.
     "ACCESS_TEAM_DOMAIN": "https://your-team.cloudflareaccess.com",
     "ACCESS_AUD": "",
-    // TODO: a sender on a domain verified in Resend, e.g. "Hampset CC <noreply@example.com>".
-    "EMAIL_FROM": "",
   },
   "observability": { "enabled": true },
 }

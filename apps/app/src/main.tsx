@@ -1,30 +1,32 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
-import { Layout } from "./components/Layout";
-import "./index.css";
-import { Home } from "./pages/Home";
-import { Invite } from "./pages/Invite";
-import { Login } from "./pages/Login";
-import { NotFound } from "./pages/NotFound";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+import { Layout } from './components/Layout';
+import './index.css';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { NotFound } from './pages/NotFound';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
 
 const router = createBrowserRouter([
-  { path: "/login", element: <Login /> },
-  { path: "/invite/:token", element: <Invite /> },
+  { element: <Login />, path: '/login' },
   {
-    element: <Layout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "*", element: <NotFound /> },
+      { element: <Home />, index: true },
+      { element: <NotFound />, path: '*' },
     ],
+    element: <Layout />,
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById('root');
+if (!root) throw new Error('index.html is missing #root');
+
+createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Refuse to deploy with placeholder config
         run: |
-          if grep -nE '("|//|\.)example\.com|00000000-0000|your-team\.|"(ACCESS_AUD|EMAIL_FROM)": ""' \
+          if grep -nE '("|//|\.)example\.com|00000000-0000|your-team\.|"ACCESS_AUD": ""' \
             apps/*/wrangler.jsonc apps/*/.env.production; then
             echo "Replace the placeholder values above before deploying (see README)." >&2
             exit 1
@@ -52,6 +55,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm db:migrate:remote
-      - run: pnpm --filter site deploy
-      - run: pnpm --filter app deploy
-      - run: pnpm --filter admin deploy
+      - run: pnpm --filter site run deploy
+      - run: pnpm --filter app run deploy
+      - run: pnpm --filter admin run deploy

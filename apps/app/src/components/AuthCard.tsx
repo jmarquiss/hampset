@@ -1,40 +1,36 @@
-import { club } from "@club/shared/club";
-import badge from "@club/shared/logo/badge.svg";
-import { Button, Card, ErrorText } from "@club/shared/ui";
-import { useEffect, useState, type ReactNode } from "react";
-import { signInWithGoogle } from "../lib/auth";
+import { club } from '@club/shared/club';
+import badge from '@club/shared/logo/badge.svg';
+import { Button, Card, ErrorText } from '@club/shared/ui';
+import { useEffect, useState, type ReactNode } from 'react';
 
-/**
- * A centred card for signed-out pages with a "Continue with Google" button. Pass `inviteToken`
- * to accept an invite.
- */
+import { signInWithGoogle } from '../lib/auth';
+
+/** A centred card for signed-out pages with a "Continue with Google" button. */
 export function AuthCard({
-  title,
   children,
   error,
-  inviteToken,
+  title,
 }: {
-  title: string;
   children: ReactNode;
-  error?: string | null;
-  inviteToken?: string;
+  error?: null | string;
+  title: string;
 }) {
   const [busy, setBusy] = useState(false);
-  const [startError, setStartError] = useState<string | null>(null);
+  const [startError, setStartError] = useState<null | string>(null);
 
   // Re-enable the button if the browser restores this page from its back/forward cache.
   useEffect(() => {
     const reset = (e: PageTransitionEvent) => e.persisted && setBusy(false);
-    window.addEventListener("pageshow", reset);
-    return () => window.removeEventListener("pageshow", reset);
+    window.addEventListener('pageshow', reset);
+    return () => window.removeEventListener('pageshow', reset);
   }, []);
 
   const signIn = async () => {
     setBusy(true);
     setStartError(null);
-    const { error } = await signInWithGoogle(inviteToken);
+    const { error } = await signInWithGoogle();
     if (error) {
-      setStartError(error.message ?? "Could not start Google sign-in.");
+      setStartError(error.message ?? 'Could not start Google sign-in.');
       setBusy(false);
     }
   };
@@ -52,7 +48,7 @@ export function AuthCard({
         <div className="space-y-3 text-sm text-muted">{children}</div>
         <ErrorText error={error ?? startError} />
         <Button className="w-full" onClick={signIn} disabled={busy}>
-          {busy ? "Redirecting…" : "Continue with Google"}
+          {busy ? 'Redirecting…' : 'Continue with Google'}
         </Button>
       </Card>
     </div>

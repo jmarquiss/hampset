@@ -1,16 +1,19 @@
+import type { MemberStatus } from '@club/db';
+
 export interface Env {
-  DB: D1Database;
   APP_URL: string;
   BETTER_AUTH_SECRET: string;
+  DB: D1Database;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
 }
 
-/** The signed-in member, as returned by GET /api/me. */
+/** The signed-in user, as returned by GET /api/me. */
 export interface Me {
+  email: string;
   id: string;
   name: string;
-  email: string;
+  status: MemberStatus;
 }
 
 export interface AppEnv {

@@ -1,5 +1,6 @@
-import type { D1Migration } from "cloudflare:test";
-import type { Env as AppBindings } from "../worker/env";
+import type { D1Migration } from 'cloudflare:test';
+
+import type { Env as AppBindings } from '../worker/env';
 
 declare global {
   namespace Cloudflare {

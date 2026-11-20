@@ -5,7 +5,7 @@
   "exports": {
     "./club": "./src/club.ts",
     "./api": "./src/api.ts",
-    "./ui": "./src/ui.tsx",
+    "./ui": "./src/ui/index.ts",
     "./theme.css": "./src/theme.css",
     "./logo/*": "./src/logo/*"
   },

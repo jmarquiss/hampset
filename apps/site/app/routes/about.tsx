@@ -1,39 +1,41 @@
-import { club } from "@club/shared/club";
-import { Page, pageMeta, Section } from "../components/Page";
-import { Teams } from "../components/Teams";
+import { club } from '@club/shared/club';
+import { BulletList, Card, CardGrid, Page, Section, TextLink } from '@club/shared/ui';
+
+import { Teams } from '../components/Teams';
+import { pageMeta } from '../meta';
 
 export const meta = () =>
   pageMeta(
-    "About the club",
+    'About the club',
     `The history, teams and grounds of ${club.name}, playing in Bath since ${club.founded}.`,
   );
 
 const grounds = [
   {
-    name: "Bloomfield Rise",
-    address: "Bloomfield Rise, Odd Down, Bath BA2 2BL",
+    address: 'Bloomfield Rise, Odd Down, Bath BA2 2BL',
     facilities: [
-      "Pavilion",
-      "Changing facilities",
-      "Score box",
-      "Two artificial nets and one grass net",
+      'Pavilion',
+      'Changing facilities',
+      'Score box',
+      'Two artificial nets and one grass net',
     ],
+    name: 'Bloomfield Rise',
   },
   {
-    name: "Odd Down Playing Fields",
-    address: "Bloomfield Road, Odd Down, Bath BA2 2PB",
-    facilities: ["Three squares", "Changing facilities"],
+    address: 'Bloomfield Road, Odd Down, Bath BA2 2PB',
+    facilities: ['Three squares', 'Changing facilities'],
+    name: 'Odd Down Playing Fields',
   },
 ];
 
 const affiliations = [
-  "West of England Premier Cricket League",
-  "North Somerset Cricket League",
-  "Bath and District Youth Cricket League",
-  "Bristol & District Cricket Association",
-  "Somerset",
-  "Bath & North East Somerset",
-  "Sports West",
+  'West of England Premier Cricket League',
+  'North Somerset Cricket League',
+  'Bath and District Youth Cricket League',
+  'Bristol & District Cricket Association',
+  'Somerset',
+  'Bath & North East Somerset',
+  'Sports West',
 ];
 
 /** About page. */
@@ -54,29 +56,20 @@ export default function About() {
       <Section title="Teams">
         <p>
           Senior men's sides on Saturdays and Sundays, a growing women's section, and juniors from
-          Under 9 to Under 19. Fixtures, results and scorecards are on our{" "}
-          <a href={club.playCricketUrl} className="font-semibold text-brand underline">
-            Play-Cricket site
-          </a>
-          .
+          Under 9 to Under 19. Fixtures, results and scorecards are on our{' '}
+          <TextLink href={club.playCricketUrl}>Play-Cricket site</TextLink>.
         </p>
         <Teams />
       </Section>
 
       <Section title="Grounds">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <CardGrid cols={2}>
           {grounds.map((ground) => (
-            <div key={ground.name} className="rounded-lg border border-line bg-white p-6">
-              <h3 className="font-display text-xl text-brand">{ground.name}</h3>
-              <p className="mt-1 text-sm text-muted">{ground.address}</p>
-              <ul className="mt-3 list-disc space-y-1 pl-6">
-                {ground.facilities.map((facility) => (
-                  <li key={facility}>{facility}</li>
-                ))}
-              </ul>
-            </div>
+            <Card key={ground.name} title={ground.name} subtitle={ground.address} level={3}>
+              <BulletList items={ground.facilities} />
+            </Card>
           ))}
-        </div>
+        </CardGrid>
       </Section>
 
       <Section title="Finding us">
@@ -86,18 +79,15 @@ export default function About() {
           left, about 50 metres before the traffic lights.
         </p>
         <p>
-          <a href={club.mapUrl} className="font-semibold text-brand underline">
-            Open in Google Maps
-          </a>
+          <TextLink href={club.mapUrl}>Open in Google Maps</TextLink>
         </p>
       </Section>
 
       <Section title="Affiliations">
-        <ul className="list-disc space-y-1 pl-6">
-          {affiliations.map((name) => (
-            <li key={name}>{name}</li>
-          ))}
-        </ul>
+        <BulletList
+          items={affiliations}
+          className="sm:columns-2 sm:gap-8 [&>li]:break-inside-avoid"
+        />
       </Section>
     </Page>
   );

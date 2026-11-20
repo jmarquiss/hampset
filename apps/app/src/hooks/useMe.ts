@@ -1,25 +1,26 @@
-import { api, ApiError } from "@club/shared/api";
-import { useQuery } from "@tanstack/react-query";
+import { api, ApiError } from '@club/shared/api';
+import { useQuery } from '@tanstack/react-query';
 
-/** The signed-in member. Mirrors `Me` in worker/env.ts. */
+/** The signed-in user. Mirrors `Me` in worker/env.ts. */
 export interface Me {
+  email: string;
   id: string;
   name: string;
-  email: string;
+  status: 'active' | 'disabled' | 'pending';
 }
 
-/** The signed-in member, or null when signed out. */
+/** The signed-in user, or null when signed out. */
 export function useMe() {
   return useQuery({
-    queryKey: ["me"],
     queryFn: async () => {
       try {
-        return await api<Me>("/me");
+        return await api<Me>('/me');
       } catch (err) {
         if (err instanceof ApiError && err.status === 401) return null;
         throw err;
       }
     },
+    queryKey: ['me'],
     staleTime: 5 * 60 * 1000,
   });
 }

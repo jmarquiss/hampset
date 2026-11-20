@@ -1,12 +1,4 @@
-# Copy to .dev.vars for local dev. In production set RESEND_API_KEY with
-# `pnpm --filter admin exec wrangler secret put RESEND_API_KEY`; the rest comes from wrangler.jsonc.
-
-# Invite links point at the local members app.
-APP_URL=http://localhost:5174
+# Copy to .dev.vars for local dev. In production these come from wrangler.jsonc.
 
 # Left empty so the dev server skips the Cloudflare Access check. Production builds never skip it.
 ACCESS_AUD=
-
-# Optional locally: without a key, invite emails (and their links) are printed in the terminal.
-RESEND_API_KEY=
-EMAIL_FROM=

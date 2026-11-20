@@ -11,13 +11,13 @@ export class ApiError extends Error {
 /** Calls a same-origin `/api` endpoint, throwing ApiError with the server's message on non-2xx. */
 export async function api<T>(
   path: string,
-  init: { method?: string; body?: unknown } = {},
+  init: { body?: unknown; method?: string } = {},
 ): Promise<T> {
   const hasBody = init.body !== undefined;
   const res = await fetch(`/api${path}`, {
-    method: init.method ?? (hasBody ? "POST" : "GET"),
-    headers: hasBody ? { "Content-Type": "application/json" } : undefined,
     body: hasBody ? JSON.stringify(init.body) : undefined,
+    headers: hasBody ? { 'Content-Type': 'application/json' } : undefined,
+    method: init.method ?? (hasBody ? 'POST' : 'GET'),
   }).catch(() => {
     // Network failures, and expired Cloudflare Access sessions redirecting to its login page.
     throw new ApiError("Couldn't reach the server. Check your connection and reload the page.", 0);

@@ -1,45 +1,36 @@
-import { getDb, hashToken, schema } from "@club/db";
-import { env } from "cloudflare:workers";
-import { eq } from "drizzle-orm";
-import { exportJWK, generateKeyPair, SignJWT } from "jose";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { app } from "../worker/index";
+import { getDb, schema, type MemberStatus } from '@club/db';
+import { env } from 'cloudflare:workers';
+import { eq } from 'drizzle-orm';
+import { exportJWK, generateKeyPair, SignJWT } from 'jose';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { app } from '../worker/index';
 
 const db = getDb(env.DB);
-const { privateKey, publicKey } = await generateKeyPair("RS256");
-const sentEmails: { to: string; subject: string; text: string }[] = [];
+const { privateKey, publicKey } = await generateKeyPair('RS256');
+const adminEmail = 'admin@example.com';
 
 beforeAll(async () => {
-  const jwk = { ...(await exportJWK(publicKey)), kid: "test", alg: "RS256" };
-  vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+  const jwk = { ...(await exportJWK(publicKey)), alg: 'RS256', kid: 'test' };
+  vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
     const url = input instanceof Request ? input.url : String(input);
     if (url === `${env.ACCESS_TEAM_DOMAIN}/cdn-cgi/access/certs`) {
-      return Response.json({ keys: [jwk] });
+      return Promise.resolve(Response.json({ keys: [jwk] }));
     }
-    if (url === "https://api.resend.com/emails") {
-      const email = JSON.parse(String(init?.body));
-      if (email.to.startsWith("bounce")) return new Response("rejected", { status: 422 });
-      sentEmails.push(email);
-      return Response.json({ id: "email-id" });
-    }
-    throw new Error(`unexpected fetch: ${url}`);
+    return Promise.reject(new Error(`unexpected fetch: ${url}`));
   });
-});
-
-afterEach(() => {
-  sentEmails.length = 0;
 });
 
 /** Signs an Access-style login token; override fields to make it invalid. */
 function accessToken(
-  opts: { aud?: string; iss?: string; exp?: string; key?: CryptoKey } = {},
+  opts: { aud?: string; email?: null | string; exp?: string; iss?: string; key?: CryptoKey } = {},
 ): Promise<string> {
-  return new SignJWT({ email: "admin@example.com" })
-    .setProtectedHeader({ alg: "RS256", kid: "test" })
+  return new SignJWT(opts.email === null ? {} : { email: opts.email ?? adminEmail })
+    .setProtectedHeader({ alg: 'RS256', kid: 'test' })
     .setIssuer(opts.iss ?? env.ACCESS_TEAM_DOMAIN)
     .setAudience(opts.aud ?? env.ACCESS_AUD)
     .setIssuedAt()
-    .setExpirationTime(opts.exp ?? "5m")
+    .setExpirationTime(opts.exp ?? '5m')
     .sign(opts.key ?? privateKey);
 }
 
@@ -47,151 +38,133 @@ function accessToken(
  * Calls the admin API as a signed-in admin from the admin page itself (same Origin, as a browser
  * sends), returning the status and parsed JSON body.
  */
-async function call(path: string, init: { method?: string; body?: unknown } = {}) {
-  const headers = new Headers({
-    "Cf-Access-Jwt-Assertion": await accessToken(),
-    Origin: "http://localhost",
-  });
-  if (init.body !== undefined) headers.set("Content-Type", "application/json");
-  const res = await app.request(
-    `/api${path}`,
-    {
-      method: init.method ?? (init.body !== undefined ? "POST" : "GET"),
-      headers,
-      body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
-    },
-    env,
-  );
+async function call(path: string, method = 'GET') {
+  const headers = { 'Cf-Access-Jwt-Assertion': await accessToken(), Origin: 'http://localhost' };
+  const res = await app.request(`/api${path}`, { headers, method }, env);
   const text = await res.text();
-  return { status: res.status, body: text ? JSON.parse(text) : null };
+  return { body: text ? JSON.parse(text) : null, status: res.status };
 }
 
-/** Inserts a member with one session, as if they had signed in to the members app. */
-async function addMember() {
+const statusFields: Record<MemberStatus, { approvedAt?: Date; disabledAt?: Date }> = {
+  active: { approvedAt: new Date() },
+  disabled: { approvedAt: new Date(), disabledAt: new Date() },
+  pending: {},
+};
+
+/** Inserts a user in the given status, with one session, as if they had signed in. */
+async function addMember(status: MemberStatus) {
   const id = crypto.randomUUID();
   const email = `${id}@example.com`;
-  await db.insert(schema.user).values({ id, name: "Test Member", email, emailVerified: true });
+  await db.insert(schema.user).values({ email, id, name: 'Test Member', ...statusFields[status] });
   await db.insert(schema.session).values({
+    expiresAt: new Date(Date.now() + 60_000),
     id: crypto.randomUUID(),
     token: crypto.randomUUID(),
     userId: id,
-    expiresAt: new Date(Date.now() + 60_000),
   });
-  return { id, email };
+  return { email, id };
 }
 
-describe("Cloudflare Access check", () => {
+/** Returns the member's current status from the list endpoint, or undefined once deleted. */
+async function statusOf(id: string) {
+  const members = (await call('/members')).body as { id: string; status: MemberStatus }[];
+  return members.find((m) => m.id === id)?.status;
+}
+
+describe('Cloudflare Access check', () => {
   it.each([
-    { name: "no token", token: async () => null, status: 401 },
-    { name: "wrong audience", token: () => accessToken({ aud: "other-app" }), status: 401 },
+    { name: 'no token', status: 401, token: () => Promise.resolve(null) },
+    { name: 'wrong audience', status: 401, token: () => accessToken({ aud: 'other-app' }) },
     {
-      name: "wrong issuer",
-      token: () => accessToken({ iss: "https://evil.example" }),
+      name: 'wrong issuer',
       status: 401,
+      token: () => accessToken({ iss: 'https://evil.example' }),
     },
-    { name: "expired", token: () => accessToken({ exp: "1 minute ago" }), status: 401 },
+    { name: 'expired', status: 401, token: () => accessToken({ exp: '1 minute ago' }) },
     {
-      name: "signed by another key",
-      token: async () => accessToken({ key: (await generateKeyPair("RS256")).privateKey }),
+      name: 'signed by another key',
       status: 401,
+      token: async () => accessToken({ key: (await generateKeyPair('RS256')).privateKey }),
     },
-    { name: "valid token", token: () => accessToken(), status: 200 },
-  ])("$name → $status", async ({ token, status }) => {
+    { name: 'no email', status: 401, token: () => accessToken({ email: null }) },
+    { name: 'valid token', status: 200, token: () => accessToken() },
+  ])('$name → $status', async ({ status, token }) => {
     const value = await token();
-    const headers: HeadersInit = value ? { "Cf-Access-Jwt-Assertion": value } : {};
-    const res = await app.request("/api/members", { headers }, env);
+    const headers: HeadersInit = value ? { 'Cf-Access-Jwt-Assertion': value } : {};
+    const res = await app.request('/api/members', { headers }, env);
     expect(res.status).toBe(status);
   });
 });
 
-describe("invites", () => {
-  it("stores only a hash of the token and emails the link", async () => {
-    const email = `${crypto.randomUUID()}@example.com`;
-    expect(await call("/invites", { body: { email: ` ${email.toUpperCase()} ` } })).toEqual({
-      status: 201,
-      body: { email },
-    });
+describe('member actions', () => {
+  it.each([
+    { after: 'active', audit: 'approve', from: 'pending', method: 'POST', path: '/approve' },
+    { after: 'disabled', audit: 'disable', from: 'pending', method: 'POST', path: '/disable' },
+    { after: 'disabled', audit: 'disable', from: 'active', method: 'POST', path: '/disable' },
+    { after: 'active', audit: 'enable', from: 'disabled', method: 'POST', path: '/enable' },
+    { after: undefined, audit: 'delete', from: 'disabled', method: 'DELETE', path: '' },
+  ] as const)(
+    '$method $path on a $from user → $audit',
+    async ({ after, audit, from, method, path }) => {
+      const member = await addMember(from);
+      expect((await call(`/members/${member.id}${path}`, method)).status).toBe(204);
 
-    const [sent] = sentEmails;
-    const token = sent?.text.match(/\/invite\/([0-9a-f]+)/)?.[1] ?? "";
-    const row = await db.query.invite.findFirst({ where: eq(schema.invite.email, email) });
-    expect({ to: sent?.to, tokenHash: row?.tokenHash }).toEqual({
-      to: email,
-      tokenHash: await hashToken(token),
-    });
-  });
+      const [latest] = (await call('/audit')).body;
+      const sessions = await db.query.session.findMany({
+        where: eq(schema.session.userId, member.id),
+      });
+      expect({ latest, sessions: sessions.length, status: await statusOf(member.id) }).toEqual({
+        status: after,
+        // Only deleting removes sessions; disabled users stay signed in but are refused access.
+        latest: expect.objectContaining({
+          action: audit,
+          actorEmail: adminEmail,
+          targetEmail: member.email,
+          targetUserId: member.id,
+        }),
+        sessions: after ? 1 : 0,
+      });
+    },
+  );
 
   it.each([
-    { name: "invalid email", body: { email: "not-an-email" }, status: 400 },
-    { name: "missing email", body: {}, status: 400 },
-  ])("rejects $name", async ({ body, status }) => {
-    expect((await call("/invites", { body })).status).toBe(status);
-    expect(sentEmails).toEqual([]);
-  });
-
-  it("drops the invite when the email can't be sent", async () => {
-    const email = `bounce-${crypto.randomUUID()}@example.com`;
-    expect((await call("/invites", { body: { email } })).status).toBe(502);
-    expect(await db.query.invite.findFirst({ where: eq(schema.invite.email, email) })).toBe(
-      undefined,
-    );
-  });
-
-  it("rejects inviting an existing member", async () => {
-    const { email } = await addMember();
-    expect(await call("/invites", { body: { email } })).toEqual({
+    { from: 'active', method: 'POST', path: '/approve' },
+    { from: 'active', method: 'POST', path: '/enable' },
+    { from: 'pending', method: 'DELETE', path: '' },
+    { from: 'active', method: 'DELETE', path: '' },
+  ] as const)('refuses $method $path on a $from user', async ({ from, method, path }) => {
+    const member = await addMember(from);
+    const res = await call(`/members/${member.id}${path}`, method);
+    const audits = await db.query.auditLog.findMany({
+      where: eq(schema.auditLog.targetUserId, member.id),
+    });
+    expect({ after: await statusOf(member.id), audits, status: res.status }).toEqual({
+      after: from,
+      audits: [],
       status: 409,
-      body: { error: `${email} is already a member.` },
     });
   });
 
-  it("lists and revokes pending invites", async () => {
-    const email = `${crypto.randomUUID()}@example.com`;
-    await call("/invites", { body: { email } });
-    const listed = (await call("/invites")).body as { id: string; email: string }[];
-    const invite = listed.find((i) => i.email === email);
-    expect(invite).toBeDefined();
-
-    expect((await call(`/invites/${invite?.id}`, { method: "DELETE" })).status).toBe(204);
-    expect(await db.query.invite.findFirst({ where: eq(schema.invite.email, email) })).toBe(
-      undefined,
-    );
-  });
-});
-
-describe("members", () => {
-  it("lists members and removes one along with their sessions", async () => {
-    const member = await addMember();
-    const listed = (await call("/members")).body as { id: string }[];
-    expect(listed.map((m) => m.id)).toContain(member.id);
-
-    expect((await call(`/members/${member.id}`, { method: "DELETE" })).status).toBe(204);
-    const sessions = await db.query.session.findMany({
-      where: eq(schema.session.userId, member.id),
-    });
-    expect(sessions).toEqual([]);
-  });
-
-  it("refuses removal requests from another site", async () => {
-    const member = await addMember();
+  it('refuses requests from another site', async () => {
+    const member = await addMember('pending');
     const res = await app.request(
-      `/api/members/${member.id}`,
+      `/api/members/${member.id}/approve`,
       {
-        method: "DELETE",
-        headers: { "Cf-Access-Jwt-Assertion": await accessToken(), Origin: "https://evil.example" },
+        headers: { 'Cf-Access-Jwt-Assertion': await accessToken(), Origin: 'https://evil.example' },
+        method: 'POST',
       },
       env,
     );
-    expect(res.status).toBe(403);
-    expect(await db.query.user.findFirst({ where: eq(schema.user.id, member.id) })).toBeDefined();
+    expect({ after: await statusOf(member.id), status: res.status }).toEqual({
+      after: 'pending',
+      status: 403,
+    });
   });
-});
 
-describe("deleting unknown ids", () => {
   it.each([
-    { path: "/members/nope", error: "Member not found" },
-    { path: "/invites/nope", error: "Invite not found" },
-  ])("$path → 404", async ({ path, error }) => {
-    expect(await call(path, { method: "DELETE" })).toEqual({ status: 404, body: { error } });
+    { method: 'DELETE', path: '/members/nope' },
+    { method: 'POST', path: '/members/nope/approve' },
+  ])('$method $path → 404', async ({ method, path }) => {
+    expect(await call(path, method)).toEqual({ body: { error: 'Member not found' }, status: 404 });
   });
 });

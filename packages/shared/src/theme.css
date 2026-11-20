@@ -21,7 +21,7 @@
   --color-muted: #5b6472; /* secondary text */
   --color-danger: #b42318;
 
-  --font-display: Georgia, "Times New Roman", serif;
+  --font-display: Georgia, 'Times New Roman', serif;
 }
 
 @layer base {

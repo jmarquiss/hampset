@@ -16,16 +16,15 @@ CREATE TABLE `account` (
 );
 --> statement-breakpoint
 CREATE INDEX `account_user_idx` ON `account` (`user_id`);--> statement-breakpoint
-CREATE TABLE `invite` (
-	`id` text PRIMARY KEY NOT NULL,
-	`email` text NOT NULL,
-	`token_hash` text NOT NULL,
-	`expires_at` integer NOT NULL,
+CREATE TABLE `audit_log` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`actor_email` text NOT NULL,
+	`action` text NOT NULL,
+	`target_user_id` text NOT NULL,
+	`target_email` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `invite_email_unique` ON `invite` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `invite_token_hash_unique` ON `invite` (`token_hash`);--> statement-breakpoint
 CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expires_at` integer NOT NULL,
@@ -46,6 +45,8 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`email_verified` integer DEFAULT false NOT NULL,
 	`image` text,
+	`approved_at` integer,
+	`disabled_at` integer,
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch() * 1000) NOT NULL
 );

@@ -1,0 +1,60 @@
+# File and folder naming conventions, checked by `pnpm lint`.
+#
+#   Folders:                    kebab-case
+#   React component files:      PascalCase.tsx
+#   Hooks, modules and tests:   camelCase.ts (hooks are useXyz.ts)
+#   Type declarations, configs: kebab-case (vite-env.d.ts, react-router.config.ts)
+#   Styles, assets and scripts: kebab-case
+#
+# Files whose names a tool decides keep them: main.tsx (Vite entry), root.tsx and route modules
+# (React Router, which names routes after their URL), index.ts, *.config.ts and wrangler.jsonc.
+
+ls:
+  packages/*/src:
+    .dir: kebab-case
+    .ts: camelCase
+    .tsx: PascalCase
+    .d.ts: kebab-case
+    .css: kebab-case
+    .svg: kebab-case
+    .png: kebab-case
+
+  apps/*/src:
+    .dir: kebab-case
+    .ts: camelCase
+    .tsx: PascalCase | regex:main
+    .d.ts: kebab-case
+    .css: kebab-case
+
+  apps/site/app:
+    .dir: kebab-case
+    .ts: camelCase
+    .tsx: PascalCase | regex:root
+    .d.ts: kebab-case
+    .css: kebab-case
+
+  apps/site/app/routes:
+    .tsx: kebab-case
+
+  apps/*/worker:
+    .ts: camelCase
+
+  apps/*/test:
+    .ts: camelCase
+    .test.ts: camelCase
+    .d.ts: kebab-case
+
+  apps/*/scripts:
+    .sh: kebab-case
+
+  '{apps/*,packages/*}':
+    .config.ts: kebab-case
+
+ignore:
+  - node_modules
+  - apps/admin/node_modules
+  - apps/app/node_modules
+  - apps/site/node_modules
+  - packages/db/node_modules
+  - packages/shared/node_modules
+  - apps/site/.react-router

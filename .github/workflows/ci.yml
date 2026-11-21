@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+    tags: ['v*']
 
 permissions:
   contents: read
@@ -26,9 +27,9 @@ jobs:
       - run: pnpm build
 
   deploy:
-    # Deploys all three Workers: the public site, the members app and the admin app.
+    # Deploys all three Workers only for a version tag pointing at a commit on main.
     needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref_type == 'tag' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: production
     # One deploy at a time, in push order, so migrations never run concurrently.
@@ -40,6 +41,10 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require the tagged commit to be on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
       - name: Refuse to deploy with placeholder config
         run: |
           if grep -nE '("|//|\.)example\.com|00000000-0000|your-team\.|"ACCESS_AUD": ""' \

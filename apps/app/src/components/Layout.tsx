@@ -4,9 +4,9 @@ import {
   Brand,
   Button,
   Card,
-  ClubFooter,
   Container,
   ErrorText,
+  Footer,
   Loading,
   Navbar,
   PageTitle,
@@ -77,7 +77,7 @@ export function Layout() {
           )}
         </Container>
       </main>
-      <ClubFooter />
+      <Footer />
     </div>
   );
 }

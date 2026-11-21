@@ -4,7 +4,7 @@ import { club } from '@club/shared/club';
 import touchIcon from '@club/shared/logo/apple-touch-icon.png';
 import icon from '@club/shared/logo/icon.svg';
 import scorpion from '@club/shared/logo/scorpion-white.svg';
-import { Brand, ButtonLink, ClubFooter, Navbar, NavItem } from '@club/shared/ui';
+import { Brand, ButtonLink, Footer, Navbar, NavItem } from '@club/shared/ui';
 import { Link, Links, Meta, NavLink, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import './app.css';
@@ -61,7 +61,7 @@ export default function App() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <ClubFooter />
+      <Footer />
     </>
   );
 }

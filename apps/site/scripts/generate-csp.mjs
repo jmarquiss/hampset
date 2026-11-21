@@ -3,7 +3,7 @@ import { copyFile, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const siteDir = path.dirname(fileURLToPath(import.meta.url)).replace(/\\scripts$/, '');
+const siteDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const outputDir = path.join(siteDir, 'build', 'client');
 const headersPath = path.join(outputDir, '_headers');
 const hashPlaceholder = '__SCRIPT_HASHES__';

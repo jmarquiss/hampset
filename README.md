@@ -46,7 +46,7 @@ Every approve, disable, enable and delete is recorded in the `audit_log` table w
 
 ## Local development
 
-Requires Node 24 and pnpm 10.
+Requires Node 26 (LTS) and pnpm 10.
 
 ```bash
 pnpm install

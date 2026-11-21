@@ -5,8 +5,7 @@
   "compatibility_date": "2026-11-01",
   // Better Auth uses AsyncLocalStorage from node:async_hooks.
   "compatibility_flags": ["nodejs_compat"],
-  // TODO: replace example.com with your domain.
-  "routes": [{ "pattern": "app.example.com", "custom_domain": true }],
+  "routes": [{ "pattern": "app.hampset.co.uk", "custom_domain": true }],
   "workers_dev": false,
   "preview_urls": false,
   "assets": {
@@ -17,15 +16,14 @@
     {
       "binding": "DB",
       "database_name": "hampset",
-      // TODO: run `pnpm --filter app exec wrangler d1 create hampset` and paste the id here and in
-      // apps/admin/wrangler.jsonc. Both Workers use the same database.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Both Workers use the same database.
+      "database_id": "cd35627b-89fe-42e6-b524-08d45bb66302",
       "migrations_dir": "../../packages/db/drizzle",
     },
   ],
   "vars": {
-    // TODO: replace example.com with your domain. Local dev overrides this in .dev.vars.
-    "APP_URL": "https://app.example.com",
+    // Local dev overrides this in .dev.vars.
+    "APP_URL": "https://app.hampset.co.uk",
   },
   "observability": { "enabled": true },
 }

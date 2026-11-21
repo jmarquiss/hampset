@@ -3,10 +3,9 @@
   // Static assets only: no Worker code runs, so requests are free and unlimited.
   "name": "hampset-site",
   "compatibility_date": "2026-11-01",
-  // TODO: replace example.com with your domain.
   "routes": [
-    { "pattern": "example.com", "custom_domain": true },
-    { "pattern": "www.example.com", "custom_domain": true },
+    { "pattern": "hampset.co.uk", "custom_domain": true },
+    { "pattern": "www.hampset.co.uk", "custom_domain": true },
   ],
   // One canonical address for search engines.
   "workers_dev": false,

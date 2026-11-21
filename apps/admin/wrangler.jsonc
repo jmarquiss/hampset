@@ -3,9 +3,8 @@
   "name": "hampset-admin",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
-  // TODO: replace example.com with your domain, then protect it with a Cloudflare Access
-  // application (see the README).
-  "routes": [{ "pattern": "admin.example.com", "custom_domain": true }],
+  // Protect this domain with a Cloudflare Access application (see the README).
+  "routes": [{ "pattern": "admin.hampset.co.uk", "custom_domain": true }],
   // Only reachable through the custom domain, so every request passes through Cloudflare Access.
   "workers_dev": false,
   "preview_urls": false,
@@ -17,8 +16,8 @@
     {
       "binding": "DB",
       "database_name": "hampset",
-      // TODO: the same id as apps/app/wrangler.jsonc. Migrations are applied from apps/app.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Migrations are applied from apps/app.
+      "database_id": "cd35627b-89fe-42e6-b524-08d45bb66302",
     },
   ],
   "vars": {

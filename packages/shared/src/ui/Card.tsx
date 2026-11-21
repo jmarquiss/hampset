@@ -24,7 +24,7 @@ export function Card({
   title?: ReactNode;
 }) {
   const Heading = level === 2 ? 'h2' : 'h3';
-  const hasHeading = Boolean(title) || Boolean(action);
+  const hasHeading = title != null || subtitle != null || action != null;
   const content = (
     <>
       {hasHeading ? (

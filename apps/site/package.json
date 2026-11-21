@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev --port 5173 --strictPort",
-    "build": "react-router build && cp build/client/404/index.html build/client/404.html",
+    "build": "react-router build && node scripts/generate-csp.mjs",
     "preview": "wrangler dev --port 8788",
     "deploy": "wrangler deploy",
     "typecheck": "react-router typegen && tsc -p ."

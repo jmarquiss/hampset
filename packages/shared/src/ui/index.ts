@@ -8,7 +8,6 @@ export * from './DataTable';
 export * from './Feedback';
 export * from './Footer';
 export * from './Hero';
-export * from './Input';
 export * from './ListDetail';
 export * from './Navbar';
 export * from './Page';

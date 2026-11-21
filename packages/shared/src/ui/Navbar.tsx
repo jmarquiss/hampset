@@ -34,6 +34,7 @@ export function Navbar({
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -42,9 +43,16 @@ export function Navbar({
       setOpen(false);
       buttonRef.current?.focus();
     };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && !navRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    };
     document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('pointerdown', onPointerDown);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('pointerdown', onPointerDown);
     };
   }, [open]);
 
@@ -76,6 +84,7 @@ export function Navbar({
               </svg>
             </button>
             <nav
+              ref={navRef}
               id={menuId}
               aria-label="Main"
               className={cx(

@@ -13,9 +13,10 @@ export function useTabs(length: number, vertical: boolean) {
   const [selected, setSelected] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const id = useId();
-  const current = Math.min(selected, length - 1);
+  const current = length === 0 ? 0 : Math.min(selected, length - 1);
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (length === 0) return;
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     const step = (vertical ? allSteps : horizontalSteps)[event.key];
     let next: number;

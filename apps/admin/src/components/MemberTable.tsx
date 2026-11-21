@@ -108,7 +108,7 @@ export function MemberTable() {
   ];
 
   return (
-    <Card title="Members">
+    <Card title="Manage access">
       <ErrorText error={error ?? change.error} />
       {isLoading && <Loading />}
       {data && (

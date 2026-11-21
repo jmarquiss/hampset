@@ -10,14 +10,18 @@
     "./logo/*": "./src/logo/*"
   },
   "scripts": {
+    "test": "vitest run",
     "typecheck": "tsc -p ."
   },
   "peerDependencies": {
     "react": "^19.3.1"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^19.2.0",
+    "jsdom": "^31.0.1",
     "react": "^19.3.1",
-    "typescript": "~6.0.0"
+    "typescript": "~6.0.0",
+    "vitest": "~4.1.12"
   }
 }

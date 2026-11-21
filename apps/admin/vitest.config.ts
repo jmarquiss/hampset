@@ -14,5 +14,5 @@ export default defineConfig(async () => ({
       wrangler: { configPath: './wrangler.jsonc' },
     }),
   ],
-  test: { setupFiles: ['./test/setup.ts'] },
+  test: { include: ['test/**/*.test.ts'], setupFiles: ['./test/setup.ts'] },
 }));

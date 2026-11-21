@@ -1,6 +1,6 @@
 import { club } from '@club/shared/club';
 import scorpion from '@club/shared/logo/scorpion-white.svg';
-import { Brand, Container, Navbar, NavItem } from '@club/shared/ui';
+import { Brand, Container, Navbar, NavItem, PageTitle } from '@club/shared/ui';
 
 import { AuditList } from './components/AuditList';
 import { MemberTable } from './components/MemberTable';
@@ -28,6 +28,7 @@ export function App() {
       />
       <main className="flex-1">
         <Container className="space-y-8 py-8">
+          <PageTitle>Admin dashboard</PageTitle>
           <MemberTable />
           <AuditList />
         </Container>

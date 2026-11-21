@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
 import { Badge } from './Badge';
 import { cx } from './cx';
@@ -26,6 +26,7 @@ export function Tabs({
   label: string;
 }) {
   const { current, panelProps, tabProps } = useTabs(items.length, false);
+  const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   return (
     <div>
       <div
@@ -33,24 +34,35 @@ export function Tabs({
         aria-label={label}
         className={cx('flex scrollbar-none overflow-x-auto border-b border-line', className)}
       >
-        {items.map((item, i) => (
-          <button
-            key={item.id}
-            type="button"
-            {...tabProps(i)}
-            className={cx(
-              '-mb-px flex shrink-0 items-center gap-2 border-b-2 p-3 text-sm font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-light sm:px-4',
-              i === current
-                ? 'border-brand text-brand'
-                : 'border-transparent text-muted hover:border-line hover:text-brand',
-            )}
-          >
-            <span>{item.label}</span>
-            {item.count !== undefined && (
-              <Badge tone={i === current ? 'brand' : 'muted'}>{item.count}</Badge>
-            )}
-          </button>
-        ))}
+        {items.map((item, i) => {
+          const props = tabProps(i);
+          return (
+            <button
+              key={item.id}
+              type="button"
+              {...props}
+              ref={(element: HTMLButtonElement | null) => {
+                tabsRef.current[i] = element;
+                props.ref(element);
+              }}
+              onClick={() => {
+                props.onClick();
+                tabsRef.current[i]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+              }}
+              className={cx(
+                '-mb-px flex shrink-0 items-center gap-2 border-b-2 p-3 text-sm font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-light sm:px-4',
+                i === current
+                  ? 'border-brand text-brand'
+                  : 'border-transparent text-muted hover:border-line hover:text-brand',
+              )}
+            >
+              <span>{item.label}</span>
+              {item.count !== undefined && (
+                <Badge tone={i === current ? 'brand' : 'muted'}>{item.count}</Badge>
+              )}
+            </button>
+          );
+        })}
       </div>
       {items.map((item, i) => (
         <div key={item.id} {...panelProps(i)} className="pt-4">

@@ -24,9 +24,9 @@ describe('DataTable', () => {
     );
 
     const table = screen.getByRole('table');
-    expect(
-      within(table).getByRole('columnheader', { name: 'Name' }).getAttribute('scope'),
-    ).toBe('col');
+    expect(within(table).getByRole('columnheader', { name: 'Name' }).getAttribute('scope')).toBe(
+      'col',
+    );
     const cells = within(table).getAllByRole('cell');
     expect(cells[0]?.textContent).toContain('Name');
     expect(cells[0]?.textContent).toContain('Ada');

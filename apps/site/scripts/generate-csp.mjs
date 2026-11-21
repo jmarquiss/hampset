@@ -8,10 +8,7 @@ const outputDir = path.join(siteDir, 'build', 'client');
 const headersPath = path.join(outputDir, '_headers');
 const hashPlaceholder = '__SCRIPT_HASHES__';
 
-await copyFile(
-  path.join(outputDir, '404', 'index.html'),
-  path.join(outputDir, '404.html'),
-);
+await copyFile(path.join(outputDir, '404', 'index.html'), path.join(outputDir, '404.html'));
 
 async function findHtmlFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

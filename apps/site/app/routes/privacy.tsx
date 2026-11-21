@@ -19,8 +19,8 @@ export default function Privacy() {
       <Section title="Who we are">
         <p>
           {club.name} is the data controller for the personal information described in this policy.
-          You can contact us at <TextLink href={`mailto:${club.email}`}>{club.email}</TextLink> or at{' '}
-          {club.address.join(', ')}.
+          You can contact us at <TextLink href={`mailto:${club.email}`}>{club.email}</TextLink> or
+          at {club.address.join(', ')}.
         </p>
       </Section>
 
@@ -64,10 +64,10 @@ export default function Privacy() {
       <Section title="Retention and your choices">
         <p>
           We keep account information while your account is active or needed to administer club
-          access. An administrator can disable an account or delete a disabled account, including its
-          sessions and linked Google account. We retain relevant audit records for accountability.
-          Enquiry emails are kept only as long as needed to handle the enquiry and related club
-          administration.
+          access. An administrator can disable an account or delete a disabled account, including
+          its sessions and linked Google account. We retain relevant audit records for
+          accountability. Enquiry emails are kept only as long as needed to handle the enquiry and
+          related club administration.
         </p>
         <p>
           You can contact us to request access to, correction of, or deletion of your personal
@@ -78,8 +78,8 @@ export default function Privacy() {
 
       <Section title="Changes to this policy">
         <p>
-          We may update this policy when our services or practices change. This page shows the current
-          version.
+          We may update this policy when our services or practices change. This page shows the
+          current version.
         </p>
         <p>Last updated: 21 November 2026.</p>
       </Section>

@@ -22,11 +22,11 @@ export const meta = () =>
 
 const highlights = [
   {
-    body: 'Six senior teams in 2026, four of them playing league cricket.',
-    title: 'Senior cricket',
+    body: 'Six senior mens teams in 2026, four of them playing league cricket.',
+    title: 'Senior mens cricket',
   },
   {
-    body: 'Age-group teams for young players aged 7 to 19, including an Under 19 T20 side.',
+    body: 'Age-group teams for young players aged 7 to 19, including an Under 19 T20 side. Supported by ECB qualified coaches.',
     title: 'Juniors',
   },
   {

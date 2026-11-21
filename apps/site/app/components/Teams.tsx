@@ -6,6 +6,7 @@ interface Team {
   format: string;
   league: string;
   name: string;
+  playCricketId?: string;
   summary: string;
   when: string;
 }
@@ -14,53 +15,59 @@ interface Team {
 const teams: Team[] = [
   {
     about:
-      'Promoted in 2026 after finishing second in Division Three. Home games are at Bloomfield Rise.',
+      'Promoted in 2026 after finishing second in Division Three.',
     format: '40-over league matches',
     league: 'Bristol & District Cricket Association, Division Three',
     name: 'Saturday 1st XI',
+    playCricketId: '15415',
     summary: 'Our top side, playing league cricket on Saturdays.',
-    when: 'Saturdays, usually 1pm',
+    when: 'Saturdays afternoons all season',
   },
   {
-    about: 'Runners-up in Division Seven East in 2026, where only the champions go up.',
+    about: 'Runners-up in Division Seven East in 2026.',
     format: '40-over league matches',
     league: 'Bristol & District Cricket Association, Division Seven East',
     name: 'Saturday 2nd XI',
+    playCricketId: '15416',
     summary: 'Competitive league cricket and a step up to the 1st XI.',
-    when: 'Saturdays, usually 1pm',
+    when: 'Saturdays afternoons all season',
   },
   {
-    about: 'Division Nine East champions in 2026, and promoted for next season.',
+    about: 'Division Nine East champions in 2026.',
     format: 'League matches',
     league: 'Bristol & District Cricket Association, Division Nine East',
     name: 'Saturday 3rd XI',
+    playCricketId: '27619',
     summary: 'League cricket for developing and returning players.',
-    when: 'Saturdays',
+    when: 'Saturdays afternoons all season',
   },
   {
-    about: 'A good way into senior cricket at the club. Ask us about getting a game.',
+    about: 'Another Saturday side, to ensure everyone who wants to play gets a game.',
     format: 'Saturday matches',
     league: 'Fixtures listed on Play-Cricket',
     name: 'Saturday 4th XI',
-    summary: 'Another Saturday side, so more members get a game.',
-    when: 'Saturdays',
+    playCricketId: '271164',
+    summary: 'A good way into senior cricket at the club.',
+    when: 'Ad-hoc saturdays afternoons throughout the season',
   },
   {
     about: 'Promoted in 2026 after finishing second in their division.',
     format: '40-over league matches',
     league: 'North Somerset League, Sunday Conference Division Three',
     name: 'Sunday XI',
+    playCricketId: '27014',
     summary: 'Sunday league cricket in North Somerset.',
-    when: 'Sundays',
+    when: 'Sunday Afternoons all season',
   },
   {
     about:
-      "The Women's 1st XI played their first ever home match at Bloomfield Rise in 2026. New players are always welcome, whether or not you've played before.",
-    format: 'Short formats, including pairs cricket',
+      "The Women's 1st XI played their first ever home match at Bloomfield Rise in 2026. New players are always welcome regardless of experience.",
+    format: 'A mix of formats, including pairs cricket',
     league: 'Friendly and festival matches',
     name: 'Women',
+    playCricketId: '421980',
     summary: "Our growing women's section, open to all abilities.",
-    when: 'Weekends through the summer',
+    when: 'Weekends throughout the summer',
   },
   {
     about:
@@ -97,7 +104,13 @@ export function Teams() {
               ))}
             </dl>
             <p className="mt-6 leading-relaxed text-accent-light">{team.about}</p>
-            <ButtonLink href={`${club.playCricketUrl}/Teams`} variant="light" className="mt-8">
+            <ButtonLink
+              href={`${club.playCricketUrl}/Teams${team.playCricketId ? `/${team.playCricketId}` : ''}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="light"
+              className="mt-8"
+            >
               Fixtures and results
             </ButtonLink>
           </>

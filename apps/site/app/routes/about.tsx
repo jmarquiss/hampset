@@ -1,5 +1,5 @@
 import { club } from '@club/shared/club';
-import { BulletList, Card, CardGrid, Page, Section, TextLink } from '@club/shared/ui';
+import { Page, Section, TextLink } from '@club/shared/ui';
 
 import { Teams } from '../components/Teams';
 import { pageMeta } from '../meta';
@@ -7,36 +7,8 @@ import { pageMeta } from '../meta';
 export const meta = () =>
   pageMeta(
     'About the club',
-    `The history, teams and grounds of ${club.name}, playing in Bath since ${club.founded}.`,
+    `The history, teams and information about ${club.name}, playing in Bath since ${club.founded}.`,
   );
-
-const grounds = [
-  {
-    address: 'Bloomfield Rise, Odd Down, Bath BA2 2BL',
-    facilities: [
-      'Pavilion',
-      'Changing facilities',
-      'Score box',
-      'Two artificial nets and one grass net',
-    ],
-    name: 'Bloomfield Rise',
-  },
-  {
-    address: 'Bloomfield Road, Odd Down, Bath BA2 2PB',
-    facilities: ['Three squares', 'Changing facilities'],
-    name: 'Odd Down Playing Fields',
-  },
-];
-
-const affiliations = [
-  'West of England Premier Cricket League',
-  'North Somerset Cricket League',
-  'Bath and District Youth Cricket League',
-  'Bristol & District Cricket Association',
-  'Somerset',
-  'Bath & North East Somerset',
-  'Sports West',
-];
 
 /** About page. */
 export default function About() {
@@ -62,16 +34,6 @@ export default function About() {
         <Teams />
       </Section>
 
-      <Section title="Grounds">
-        <CardGrid cols={2}>
-          {grounds.map((ground) => (
-            <Card key={ground.name} title={ground.name} subtitle={ground.address} level={3}>
-              <BulletList items={ground.facilities} />
-            </Card>
-          ))}
-        </CardGrid>
-      </Section>
-
       <Section title="Finding us">
         <p>
           From Bath, take the A367 towards Radstock. Just after The Bear pub at Bear Flat, take the
@@ -81,13 +43,6 @@ export default function About() {
         <p>
           <TextLink href={club.mapUrl}>Open in Google Maps</TextLink>
         </p>
-      </Section>
-
-      <Section title="Affiliations">
-        <BulletList
-          items={affiliations}
-          className="sm:columns-2 sm:gap-8 [&>li]:break-inside-avoid"
-        />
       </Section>
     </Page>
   );

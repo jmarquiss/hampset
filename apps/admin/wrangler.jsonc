@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hampset-admin",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  // Protect this domain with a Cloudflare Access application (see the README).
+  "routes": [{ "pattern": "admin.hampset.co.uk", "custom_domain": true }],
+  // Only reachable through the custom domain, so every request passes through Cloudflare Access.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hampset",
+      // Migrations are applied from apps/app.
+      "database_id": "cd35627b-89fe-42e6-b524-08d45bb66302",
+    },
+  ],
+  "vars": {
+    "ACCESS_TEAM_DOMAIN": "https://hampset.cloudflareaccess.com",
+    "ACCESS_AUD": "51c6517aa7d1a538bab06225ac151d601368d11040508e1f56e81ee9c1610c41",
+  },
+  "observability": { "enabled": true },
+}

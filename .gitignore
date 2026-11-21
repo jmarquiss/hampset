@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.react-router/
+.wrangler/
+.dev.vars
+.env
+.env.local
+*.log
+coverage/
+.eslintcache
+.vscode/

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  deploy:
+    # Deploys all three Workers only for a version tag pointing at a commit on main.
+    needs: check
+    if: github.ref_type == 'tag' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    # One deploy at a time, in push order, so migrations never run concurrently.
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Require the tagged commit to be on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - name: Refuse to deploy with placeholder config
+        run: |
+          if grep -nE '("|//|\.)example\.com|00000000-0000|your-team\.|"ACCESS_AUD": ""' \
+            apps/*/wrangler.jsonc apps/*/.env.production; then
+            echo "Replace the placeholder values above before deploying (see README)." >&2
+            exit 1
+          fi
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm db:migrate:remote
+      - run: pnpm --filter site run deploy
+      - run: pnpm --filter app run deploy
+      - run: pnpm --filter admin run deploy

@@ -1,0 +1,12 @@
+# Copy to .dev.vars for local dev. In production set the secrets with
+# `pnpm --filter app exec wrangler secret put <NAME>` (APP_URL comes from wrangler.jsonc).
+
+APP_URL=http://localhost:5174
+
+# A long random string, e.g. `openssl rand -base64 32`.
+BETTER_AUTH_SECRET=
+
+# Google OAuth client (https://console.cloud.google.com/apis/credentials).
+# Authorised redirect URI for local dev: http://localhost:5174/api/auth/callback/google
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

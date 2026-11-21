@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+dist/
+build/
+.react-router/
+.wrangler/
+packages/db/drizzle/
+coverage/

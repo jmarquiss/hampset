@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local dev. In production these come from wrangler.jsonc.
+
+# Left empty so the dev server skips the Cloudflare Access check. Production builds never skip it.
+ACCESS_AUD=

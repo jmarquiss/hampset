@@ -9,4 +9,4 @@
 ## Security and infrastructure
 
 - [ ] Clean up expired sessions on a schedule (Cron Trigger on the members Worker).
-- [ ] Privacy page and GDPR data-removal information.
+- [x] Publish a privacy policy and terms of service, including instructions to email for personal-information removal requests.

@@ -64,9 +64,17 @@ export default function App() {
       <Footer
         logo={scorpion}
         aside={
-          <a href={`mailto:${club.email}`} className="hover:text-white">
-            {club.email}
-          </a>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link to="/privacy" className="hover:text-white">
+              Privacy policy
+            </Link>
+            <Link to="/terms" className="hover:text-white">
+              Terms of service
+            </Link>
+            <a href={`mailto:${club.email}`} className="hover:text-white">
+              {club.email}
+            </a>
+          </div>
         }
       >
         © {club.name}, founded {club.founded}

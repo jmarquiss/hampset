@@ -14,8 +14,7 @@ interface Team {
 // Edit this list as teams change. League details are from the club's Play-Cricket site.
 const teams: Team[] = [
   {
-    about:
-      'Promoted in 2026 after finishing second in Division Three.',
+    about: 'Promoted in 2026 after finishing second in Division Three.',
     format: '40-over league matches',
     league: 'Bristol & District Cricket Association, Division Three',
     name: 'Saturday 1st XI',

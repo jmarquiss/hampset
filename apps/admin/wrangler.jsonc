@@ -21,9 +21,8 @@
     },
   ],
   "vars": {
-    // TODO: from Zero Trust → Access → Applications → your admin app.
-    "ACCESS_TEAM_DOMAIN": "https://your-team.cloudflareaccess.com",
-    "ACCESS_AUD": "",
+    "ACCESS_TEAM_DOMAIN": "https://hampset.cloudflareaccess.com",
+    "ACCESS_AUD": "51c6517aa7d1a538bab06225ac151d601368d11040508e1f56e81ee9c1610c41",
   },
   "observability": { "enabled": true },
 }

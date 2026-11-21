@@ -2,6 +2,7 @@ export * from './Badge';
 export * from './Button';
 export * from './CallToAction';
 export * from './Card';
+export * from './ClubFooter';
 export * from './Container';
 export * from './cx';
 export * from './DataTable';

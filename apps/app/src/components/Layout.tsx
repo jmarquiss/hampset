@@ -4,9 +4,9 @@ import {
   Brand,
   Button,
   Card,
+  ClubFooter,
   Container,
   ErrorText,
-  Footer,
   Loading,
   Navbar,
   PageTitle,
@@ -77,16 +77,7 @@ export function Layout() {
           )}
         </Container>
       </main>
-      <Footer
-        logo={scorpion}
-        aside={
-          <a href={`mailto:${club.email}`} className="hover:text-white">
-            {club.email}
-          </a>
-        }
-      >
-        © {club.name}
-      </Footer>
+      <ClubFooter />
     </div>
   );
 }

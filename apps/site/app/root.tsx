@@ -4,7 +4,7 @@ import { club } from '@club/shared/club';
 import touchIcon from '@club/shared/logo/apple-touch-icon.png';
 import icon from '@club/shared/logo/icon.svg';
 import scorpion from '@club/shared/logo/scorpion-white.svg';
-import { Brand, ButtonLink, Footer, Navbar, NavItem } from '@club/shared/ui';
+import { Brand, ButtonLink, ClubFooter, Navbar, NavItem } from '@club/shared/ui';
 import { Link, Links, Meta, NavLink, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import './app.css';
@@ -61,24 +61,7 @@ export default function App() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer
-        logo={scorpion}
-        aside={
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link to="/privacy" className="hover:text-white">
-              Privacy policy
-            </Link>
-            <Link to="/terms" className="hover:text-white">
-              Terms of service
-            </Link>
-            <a href={`mailto:${club.email}`} className="hover:text-white">
-              {club.email}
-            </a>
-          </div>
-        }
-      >
-        © {club.name}, founded {club.founded}
-      </Footer>
+      <ClubFooter />
     </>
   );
 }

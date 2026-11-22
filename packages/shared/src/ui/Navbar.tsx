@@ -147,12 +147,12 @@ export function Brand<C extends ElementType = 'span'>({
   return (
     <Component
       className={cx(
-        'flex items-center gap-3 font-display text-lg font-bold whitespace-nowrap',
+        'flex min-w-0 items-center gap-3 font-display text-xl font-bold tracking-wide whitespace-nowrap',
         className,
       )}
       {...props}
     >
-      <img src={logo} alt="" className="h-8 w-auto" />
+      <img src={logo} alt="" className="h-8 w-auto shrink-0" />
       {children}
     </Component>
   );

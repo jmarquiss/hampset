@@ -127,7 +127,7 @@ The name, address, phone number, email and social links are in [`packages/shared
 
 Each page is a React component in `apps/site/app/routes/` (`home.tsx`, `about.tsx`, `contact.tsx`). Edit the text there; each page's title and description for search engines and link previews are in its `meta` export.
 
-Pages in all three apps are built from the shared components in [`packages/shared/src/ui/`](packages/shared/src/ui/) (`Navbar`, `Footer`, `Page`, `Section`, `Hero`, `Card`, `CardGrid`, `CallToAction`, `Button`, `ButtonLink`, `TextLink`, `Tabs`, `ListDetail`, `DataTable` and so on), imported from `@club/shared/ui`. Add or restyle a building block there rather than styling one page by hand, so every app stays consistent. File names follow `.ls-lint.yml`: PascalCase for component files, camelCase for other modules and hooks, and lowercase route files in `apps/site/app/routes/`.
+Pages in all three apps are built from the shared components in [`packages/shared/src/ui/`](packages/shared/src/ui/) (`Shell`, `Navbar`, `Page`, `Section`, `Hero`, `Card`, `CardGrid`, `CallToAction`, `Button`, `ButtonLink`, `TextLink`, `Tabs`, `ListDetail`, `DataTable` and so on), imported from `@club/shared/ui`. Add or restyle a building block there rather than styling one page by hand, so every app stays consistent. File names follow `.ls-lint.yml`: PascalCase for component files, camelCase for other modules and hooks, and lowercase route files in `apps/site/app/routes/`.
 
 The teams on the About page (league, format, match days and a short description) are a list at the top of [`apps/site/app/components/Teams.tsx`](apps/site/app/components/Teams.tsx). Update it each season.
 
@@ -136,7 +136,7 @@ To add a page:
 1. Create `apps/site/app/routes/<name>.tsx`. Copy `about.tsx` as a starting point.
 2. Add it to [`apps/site/app/routes.ts`](apps/site/app/routes.ts).
 3. Add its path to `prerender` in [`apps/site/react-router.config.ts`](apps/site/react-router.config.ts) so it's built as static HTML.
-4. Add it to `nav` in [`apps/site/app/root.tsx`](apps/site/app/root.tsx) if it belongs in the header.
+4. Add it to `headerPages` or `footerPages` in [`packages/shared/src/ui/Shell.tsx`](packages/shared/src/ui/Shell.tsx) if it belongs in the header or footer, which all three apps share.
 
 ### Database
 

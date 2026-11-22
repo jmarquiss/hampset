@@ -153,27 +153,6 @@ CI runs migrations before deploying the new code, so the old code briefly runs a
 - **Members app:** add routes in `apps/app/worker/index.ts` after `app.use(requireMember)`. They require an approved, non-disabled member automatically, and `c.var.user` holds the member. Don't call Better Auth's `getSession` directly in routes, because that skips the approval check. `requireSession` also passes on Better Auth's daily session refresh, so active members stay signed in.
 - **Admin app:** add routes in `apps/admin/worker/index.ts`. Every route is behind the Access check.
 
-## First-time Cloudflare setup
-
-Do these once, in order. Search the repo for `TODO` to find every placeholder.
-
-1. **Domain.** Add the domain to Cloudflare (or buy it through Cloudflare Registrar). Replace `example.com` in `apps/*/wrangler.jsonc` and `apps/*/.env.production`.
-2. **Database.** Run `pnpm --filter app exec wrangler d1 create hampset`. Paste the `database_id` into both `apps/app/wrangler.jsonc` and `apps/admin/wrangler.jsonc`.
-3. **Google sign-in.** In the Google Cloud console, add `https://app.<domain>/api/auth/callback/google` as an authorised redirect URI on your OAuth client, then publish the consent screen.
-4. **Members app secrets.** Run each of these and paste the value when asked:
-   ```bash
-   pnpm --filter app exec wrangler secret put BETTER_AUTH_SECRET
-   pnpm --filter app exec wrangler secret put GOOGLE_CLIENT_ID
-   pnpm --filter app exec wrangler secret put GOOGLE_CLIENT_SECRET
-   ```
-5. **Cloudflare Access for the admin app.**
-   1. In the Cloudflare dashboard, open **Zero Trust**. The first time, pick a team name and the Free plan.
-   2. Under **Settings → Authentication**, the built-in "One-time PIN" login is enough (Cloudflare emails a code). You can add Google as well.
-   3. Under **Access → Applications**, add a **Self-hosted** application for `admin.<domain>`. Add a policy with action **Allow** that includes the admins' email addresses.
-   4. Copy the application's **Application Audience (AUD) tag** into `ACCESS_AUD`, and `https://<team>.cloudflareaccess.com` into `ACCESS_TEAM_DOMAIN`, in `apps/admin/wrangler.jsonc`.
-6. **GitHub.** Add the repository secrets `CLOUDFLARE_API_TOKEN` (with Workers Scripts, D1 and Workers Routes edit permissions) and `CLOUDFLARE_ACCOUNT_ID`.
-7. **Hardening.** In the Cloudflare dashboard, turn on the free managed WAF rules and Bot Fight Mode, and add a rate-limiting rule for `app.<domain>/api/auth/*`. Anyone with a Google account can sign up, so these keep spam sign-ups down.
-
 ## Deploying
 
 Pushing to `main` runs `.github/workflows/ci.yml`:
@@ -194,7 +173,7 @@ To deploy by hand: `pnpm build && pnpm db:migrate:remote`, then `pnpm --filter <
 - All three sites send `Strict-Transport-Security`.
 - New accounts need an email Google has verified, because admins approve people by email.
 - Both APIs reject state-changing requests from other sites (Hono `csrf()`), and session cookies are `HttpOnly` and `SameSite=Lax`.
-- Better Auth's built-in rate limit is in memory, separately in each Worker instance, so treat it as a best effort. The Cloudflare rate-limiting rule above is the real limit on sign-in attempts.
+- Better Auth's built-in rate limit is in memory, separately in each Worker instance, so treat it as a best effort. The Cloudflare rate-limiting rule on `app.<domain>/api/auth/*` is the real limit on sign-in attempts.
 
 ## Troubleshooting
 

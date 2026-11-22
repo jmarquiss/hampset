@@ -1,5 +1,6 @@
 import { club } from '@club/shared/club';
 import { Card, CardGrid, PageTitle } from '@club/shared/ui';
+import { siteUrl } from '@club/shared/urls';
 import { useOutletContext } from 'react-router';
 
 import type { Me } from '../hooks/useMe';
@@ -12,7 +13,7 @@ const links = [
   },
   {
     body: 'News, club information and how to find us.',
-    href: import.meta.env.VITE_SITE_URL,
+    href: siteUrl,
     title: 'Club website',
   },
   {

@@ -1,16 +1,5 @@
 import { club } from '@club/shared/club';
-import scorpion from '@club/shared/logo/scorpion-white.svg';
-import {
-  Brand,
-  Button,
-  Card,
-  Container,
-  ErrorText,
-  Footer,
-  Loading,
-  Navbar,
-  PageTitle,
-} from '@club/shared/ui';
+import { Button, Card, Container, ErrorText, Loading, PageTitle, Shell } from '@club/shared/ui';
 import { Navigate, Outlet } from 'react-router';
 
 import { useMe } from '../hooks/useMe';
@@ -47,37 +36,29 @@ export function Layout() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar
-        brand={
-          <Brand as="a" href={import.meta.env.VITE_SITE_URL} logo={scorpion}>
-            {club.shortName}
-          </Brand>
-        }
-        actions={
+    <Shell
+      label="Members"
+      actions={
+        <>
+          <span className="mr-2 hidden text-sm text-accent lg:inline">{me.email}</span>
+          <Button variant="outline-light" size="sm" onClick={signOut}>
+            Sign out
+          </Button>
+        </>
+      }
+    >
+      <Container className="py-8">
+        {me.status === 'active' ? (
+          <Outlet context={me} />
+        ) : (
           <>
-            <span className="mr-2 hidden text-sm text-accent sm:inline">{me.email}</span>
-            <Button variant="outline-light" size="sm" onClick={signOut}>
-              Sign out
-            </Button>
+            <PageTitle>{notices[me.status].title}</PageTitle>
+            <Card>
+              <p className="wrap-anywhere">{notices[me.status].body}</p>
+            </Card>
           </>
-        }
-      />
-      <main className="flex-1">
-        <Container className="py-8">
-          {me.status === 'active' ? (
-            <Outlet context={me} />
-          ) : (
-            <>
-              <PageTitle>{notices[me.status].title}</PageTitle>
-              <Card>
-                <p className="wrap-anywhere">{notices[me.status].body}</p>
-              </Card>
-            </>
-          )}
-        </Container>
-      </main>
-      <Footer />
-    </div>
+        )}
+      </Container>
+    </Shell>
   );
 }

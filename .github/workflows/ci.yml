@@ -47,9 +47,10 @@ jobs:
         run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
       - name: Refuse to deploy with placeholder config
         run: |
+          test -f .env.production
           if grep -nE '("|//|\.)example\.com|00000000-0000|your-team\.|"ACCESS_AUD": ""' \
-            apps/*/wrangler.jsonc apps/*/.env.production; then
-            echo "Replace the placeholder values above before deploying (see README)." >&2
+            apps/*/wrangler.jsonc .env.production; then
+            echo "Replace the placeholder values above before deploying." >&2
             exit 1
           fi
       - uses: pnpm/action-setup@v6

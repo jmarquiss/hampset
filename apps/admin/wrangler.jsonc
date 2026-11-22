@@ -3,7 +3,7 @@
   "name": "hampset-admin",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
-  // Protect this domain with a Cloudflare Access application (see the README).
+  // Protect this domain with a Cloudflare Access application.
   "routes": [{ "pattern": "admin.hampset.co.uk", "custom_domain": true }],
   // Only reachable through the custom domain, so every request passes through Cloudflare Access.
   "workers_dev": false,

@@ -11,6 +11,7 @@ import {
   Navbar,
   PageTitle,
 } from '@club/shared/ui';
+import { siteUrl } from '@club/shared/urls';
 import { Navigate, Outlet } from 'react-router';
 
 import { useMe } from '../hooks/useMe';
@@ -50,7 +51,7 @@ export function Layout() {
     <div className="flex min-h-screen flex-col">
       <Navbar
         brand={
-          <Brand as="a" href={import.meta.env.VITE_SITE_URL} logo={scorpion}>
+          <Brand as="a" href={siteUrl} logo={scorpion}>
             {club.shortName}
           </Brand>
         }

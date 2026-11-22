@@ -5,6 +5,7 @@ import touchIcon from '@club/shared/logo/apple-touch-icon.png';
 import icon from '@club/shared/logo/icon.svg';
 import scorpion from '@club/shared/logo/scorpion-white.svg';
 import { Brand, ButtonLink, Footer, Navbar, NavItem } from '@club/shared/ui';
+import { appUrl } from '@club/shared/urls';
 import { Link, Links, Meta, NavLink, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import './app.css';
@@ -53,7 +54,7 @@ export default function App() {
           </NavItem>
         ))}
         actions={
-          <ButtonLink href={import.meta.env.VITE_APP_URL} variant="light" size="sm">
+          <ButtonLink href={appUrl} variant="light" size="sm">
             Members
           </ButtonLink>
         }

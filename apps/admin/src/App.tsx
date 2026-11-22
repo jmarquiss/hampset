@@ -1,6 +1,7 @@
 import { club } from '@club/shared/club';
 import scorpion from '@club/shared/logo/scorpion-white.svg';
 import { Brand, Container, Navbar, NavItem, PageTitle } from '@club/shared/ui';
+import { appUrl, siteUrl } from '@club/shared/urls';
 
 import { AuditList } from './components/AuditList';
 import { MemberTable } from './components/MemberTable';
@@ -19,8 +20,8 @@ export function App() {
         }
         links={
           <>
-            <NavItem href={import.meta.env.VITE_SITE_URL}>Website</NavItem>
-            <NavItem href={import.meta.env.VITE_APP_URL}>Members app</NavItem>
+            <NavItem href={siteUrl}>Website</NavItem>
+            <NavItem href={appUrl}>Members app</NavItem>
             {/* Ends the Cloudflare Access session. */}
             <NavItem href="/cdn-cgi/access/logout">Sign out</NavItem>
           </>

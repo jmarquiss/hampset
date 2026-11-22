@@ -3,7 +3,7 @@
 #   Folders:                    kebab-case
 #   React component files:      PascalCase.tsx
 #   Hooks, modules and tests:   camelCase.ts (hooks are useXyz.ts)
-#   Type declarations, configs: kebab-case (vite-env.d.ts, react-router.config.ts)
+#   Type declarations, configs: kebab-case (assets.d.ts, react-router.config.ts)
 #   Styles, assets and scripts: kebab-case
 #
 # Files whose names a tool decides keep them: main.tsx (Vite entry), root.tsx and route modules

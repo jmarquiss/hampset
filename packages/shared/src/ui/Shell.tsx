@@ -15,10 +15,21 @@ const headerPages = [
   { label: 'Contact', path: '/contact' },
 ];
 
+// `shortLabel` is shown on phones, so the footer fits on one line.
 const footerPages = [
-  { label: 'Privacy policy', path: '/privacy' },
-  { label: 'Terms of service', path: '/terms' },
+  { label: 'Privacy policy', path: '/privacy', shortLabel: 'Privacy' },
+  { label: 'Terms of service', path: '/terms', shortLabel: 'Terms' },
 ];
+
+/** Shows `short` on phones and `full` from the `sm` breakpoint up. */
+function Responsive({ full, short }: { full: string; short: string }) {
+  return (
+    <>
+      <span className="sm:hidden">{short}</span>
+      <span className="max-sm:hidden">{full}</span>
+    </>
+  );
+}
 
 /**
  * The header, main content and footer shared by the site, members app and admin. The header
@@ -70,15 +81,17 @@ export function Shell({
       />
       <main className="flex-1">{children}</main>
       <footer className="bg-brand text-sm text-accent">
-        <Container className="flex flex-wrap items-center justify-between gap-4 py-6">
+        <Container className="flex items-center justify-between gap-4 py-6 whitespace-nowrap">
           <span className="flex items-center gap-3">
             <img src={scorpion} alt="" className="h-7 w-auto" />
-            <span>© {club.name}</span>
+            <span>
+              © <Responsive full={club.name} short={club.shortName} />
+            </span>
           </span>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex items-center gap-4">
             {footerPages.map((page) => (
               <Link key={page.path} href={href(page.path)} className="hover:text-white">
-                {page.label}
+                <Responsive full={page.label} short={page.shortLabel} />
               </Link>
             ))}
           </div>

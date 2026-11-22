@@ -29,9 +29,13 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 }
 
-/** Renders the shared header and footer's site links as in-app links, highlighting the page. */
+/**
+ * Renders the shared header and footer's site links as in-app links, highlighting the page. Only
+ * the home link needs `end`; prerendering uses trailing-slash paths such as `/about/`, which an
+ * exact match would miss.
+ */
 function SiteLink({ href, ...props }: { href: string } & ComponentPropsWithoutRef<'a'>) {
-  return <NavLink to={href} end {...props} />;
+  return <NavLink to={href} end={href === '/'} {...props} />;
 }
 
 /** Header, page content and footer. */

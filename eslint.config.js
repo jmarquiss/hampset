@@ -63,6 +63,7 @@ export default defineConfig(
         project: [
           './apps/*/worker/tsconfig.json',
           './apps/*/tsconfig.json',
+          './apps/*/tsconfig.node.json',
           './packages/*/tsconfig.json',
         ],
         tsconfigRootDir: import.meta.dirname,

@@ -21,6 +21,8 @@
       "migrations_dir": "../../packages/db/drizzle",
     },
   ],
+  // Each schedule runs the job in worker/crons/ with the same schedule.
+  "triggers": { "crons": ["0 3 * * *"] },
   "vars": {
     // Local dev overrides this in .dev.vars.
     "APP_URL": "https://app.hampset.co.uk",

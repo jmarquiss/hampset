@@ -37,7 +37,9 @@ ls:
     .tsx: kebab-case
 
   apps/*/worker:
+    .dir: kebab-case
     .ts: camelCase
+    .test.ts: camelCase
 
   apps/*/test:
     .ts: camelCase

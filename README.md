@@ -29,6 +29,7 @@ flowchart LR
 ## How sign-in works
 
 - **Members** sign in with Google. Anyone can sign in, but new accounts can't see anything until an admin approves them.
+- **Sessions** last 30 days and extend while a member keeps using the app. A Cron Trigger on the members Worker deletes expired ones every day at 03:00 UTC.
 - **Admins** never sign in to the members app. `admin.domain.com` sits behind [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/), so Cloudflare checks who they are before a request reaches the site. You choose who's allowed in from the Cloudflare dashboard. The free plan covers up to 50 admins.
 
 ### Approving a member
@@ -152,6 +153,10 @@ CI runs migrations before deploying the new code, so the old code briefly runs a
 
 - **Members app:** add routes in `apps/app/worker/index.ts` after `app.use(requireMember)`. They require an approved, non-disabled member automatically, and `c.var.user` holds the member. Don't call Better Auth's `getSession` directly in routes, because that skips the approval check. `requireSession` also passes on Better Auth's daily session refresh, so active members stay signed in.
 - **Admin app:** add routes in `apps/admin/worker/index.ts`. Every route is behind the Access check.
+
+### Adding scheduled jobs
+
+Members-app jobs live in `apps/app/worker/crons/`, one file per job with its test beside it. Each exports a `schedule` (a cron expression in UTC) and a `run` function. Add the job to the list in `crons/index.ts` and its schedule to `triggers.crons` in `apps/app/wrangler.jsonc`. The free plan allows five schedules across the whole account.
 
 ## Deploying
 

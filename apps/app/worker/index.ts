@@ -5,9 +5,10 @@ import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { secureHeaders } from 'hono/secure-headers';
 
-import type { AppEnv } from './env';
+import type { AppEnv, Env } from './env';
 
 import { createAuth } from './auth';
+import { scheduled } from './crons';
 
 /**
  * Loads the signed-in user into c.var.user, or responds 401. Passes on the refreshed session
@@ -59,4 +60,4 @@ app.onError((err, c) => {
   return c.json({ error: 'Something went wrong' }, 500);
 });
 
-export default app;
+export default { fetch: app.fetch, scheduled } satisfies ExportedHandler<Env>;

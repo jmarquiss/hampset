@@ -1,10 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":semanticCommitTypeAll(chore)"],
+  "extends": ["config:recommended", ":semanticCommits", ":semanticCommitTypeAll(chore)"],
   "timezone": "Europe/London",
   "schedule": ["* 0-5 * * 1"],
   "minimumReleaseAge": "3 days",
-  "lockFileMaintenance": { "enabled": true },
+  "lockFileMaintenance": { "enabled": true, "automerge": true },
   "packageRules": [
     {
       "description": "Automerge minor and patch updates once CI passes, except for 0.x versions",
@@ -24,6 +24,16 @@
         "@typescript-eslint/**"
       ],
       "matchCurrentVersion": "!/^v?0\\./"
+    },
+    {
+      "description": "Keep the Workers toolchain in one PR",
+      "groupName": "cloudflare",
+      "matchPackageNames": ["wrangler", "@cloudflare/**"]
+    },
+    {
+      "description": "drizzle-kit must stay in step with drizzle-orm",
+      "groupName": "drizzle",
+      "matchPackageNames": ["drizzle-orm", "drizzle-kit"]
     },
     {
       "description": "Group GitHub Actions bumps",

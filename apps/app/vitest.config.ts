@@ -1,13 +1,24 @@
 import { cloudflareTest, readD1Migrations } from '@cloudflare/vitest-plugin';
+import { parse, type ParseError, printParseErrorCode } from 'jsonc-parser';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
-import { unstable_readConfig } from 'wrangler';
 
-/** The cron schedules in wrangler.jsonc. Wrangler's Config type doesn't resolve outside it. */
-function wranglerCrons() {
-  const config = unstable_readConfig({ config: './wrangler.jsonc' }) as {
-    triggers: { crons: string[] };
+/** The cron schedules under triggers.crons in wrangler.jsonc. */
+function wranglerCrons(): string[] {
+  const errors: ParseError[] = [];
+  const config = parse(readFileSync('./wrangler.jsonc', 'utf8'), errors, {
+    allowTrailingComma: true,
+  }) as {
+    triggers?: { crons?: string[] };
   };
-  return config.triggers.crons;
+  const [error] = errors;
+  if (error)
+    throw new Error(
+      `wrangler.jsonc: ${printParseErrorCode(error.error)} at offset ${String(error.offset)}`,
+    );
+  const crons = config.triggers?.crons;
+  if (!crons) throw new Error('wrangler.jsonc has no triggers.crons');
+  return crons;
 }
 
 export default defineConfig(async () => ({

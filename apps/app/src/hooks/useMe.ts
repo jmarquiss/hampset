@@ -1,13 +1,9 @@
 import { api, ApiError } from '@club/shared/api';
 import { useQuery } from '@tanstack/react-query';
 
-/** The signed-in user. Mirrors `Me` in worker/env.ts. */
-export interface Me {
-  email: string;
-  id: string;
-  name: string;
-  status: 'active' | 'disabled' | 'pending';
-}
+import type { Me } from '../../worker/schemas/me.schema';
+
+export type { Me };
 
 /** The signed-in user, or null when signed out. */
 export function useMe() {

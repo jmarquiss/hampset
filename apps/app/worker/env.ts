@@ -1,4 +1,4 @@
-import type { MemberStatus } from '@club/db';
+import type { Me } from './schemas/me.schema';
 
 export interface Env {
   APP_URL: string;
@@ -6,14 +6,6 @@ export interface Env {
   DB: D1Database;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
-}
-
-/** The signed-in user, as returned by GET /api/me. */
-export interface Me {
-  email: string;
-  id: string;
-  name: string;
-  status: MemberStatus;
 }
 
 export interface AppEnv {

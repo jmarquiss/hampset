@@ -1,7 +1,7 @@
 import { createMiddleware } from 'hono/factory';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-import type { AdminEnv } from './env';
+import type { AdminEnv } from '../env';
 
 const keySets = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 

@@ -1,0 +1,25 @@
+import { memberStatus } from '@club/db';
+import { createMiddleware } from 'hono/factory';
+
+import type { AppEnv } from '../env';
+
+import { createAuth } from '../auth';
+
+/** Loads the signed-in user into context and forwards refreshed session cookies. */
+export const requireSession = createMiddleware<AppEnv>(async (c, next) => {
+  const { headers, response: session } = await createAuth(c.env).api.getSession({
+    headers: c.req.raw.headers,
+    returnHeaders: true,
+  });
+  if (!session) return c.json({ error: 'Not signed in' }, 401);
+  for (const cookie of headers.getSetCookie()) c.header('Set-Cookie', cookie, { append: true });
+  const { email, id, name } = session.user;
+  c.set('user', { email, id, name, status: memberStatus(session.user) });
+  return next();
+});
+
+/** Responds 403 unless the signed-in user has been approved and isn't disabled. */
+export const requireMember = createMiddleware<AppEnv>(async (c, next) => {
+  if (c.var.user.status !== 'active') return c.json({ error: 'Not an active member' }, 403);
+  return next();
+});

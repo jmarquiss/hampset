@@ -1,24 +1,11 @@
 import { api } from '@club/shared/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export interface Member {
-  createdAt: string;
-  email: string;
-  id: string;
-  name: string;
-  status: 'active' | 'disabled' | 'pending';
-}
+import type { AuditAction as MemberAction, AuditEntry } from '../../worker/schemas/audit.schema';
+import type { Member } from '../../worker/schemas/member.schema';
 
-/** Something an admin can do to a member; also the action recorded in the audit log. */
-export type MemberAction = 'approve' | 'delete' | 'disable' | 'enable';
-
-export interface AuditEntry {
-  action: MemberAction;
-  actorEmail: string;
-  createdAt: string;
-  id: number;
-  targetEmail: string;
-}
+export type { Member };
+export type { AuditAction as MemberAction, AuditEntry } from '../../worker/schemas/audit.schema';
 
 /** Formats an ISO timestamp as a UK date, e.g. "17 Nov 2026". */
 export const formatDate = (iso: string) =>

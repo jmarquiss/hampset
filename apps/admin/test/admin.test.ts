@@ -71,6 +71,27 @@ async function statusOf(id: string) {
   return members.find((m) => m.id === id)?.status;
 }
 
+describe('OpenAPI document', () => {
+  it('documents the protected routes and Access security scheme', async () => {
+    const { body, status } = await call('/openapi.json');
+    expect(status).toBe(200);
+    expect(body).toMatchObject({
+      components: {
+        securitySchemes: {
+          CloudflareAccess: {
+            in: 'header',
+            name: 'Cf-Access-Jwt-Assertion',
+            type: 'apiKey',
+          },
+        },
+      },
+      security: [{ CloudflareAccess: [] }],
+    });
+    expect(body).toHaveProperty(['paths', '/api/members']);
+    expect(body).toHaveProperty(['paths', '/api/audit']);
+  });
+});
+
 describe('Cloudflare Access check', () => {
   it.each([
     { name: 'no token', status: 401, token: () => Promise.resolve(null) },

@@ -1,52 +1,34 @@
-import { memberStatus } from '@club/db';
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi';
 import { csrf } from 'hono/csrf';
-import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { secureHeaders } from 'hono/secure-headers';
 
 import type { AppEnv, Env } from './env';
 
-import { createAuth } from './auth';
 import { scheduled } from './crons';
+import { requireMember, requireSession } from './middlewares/auth.middleware';
+import { authRoutes } from './routes/auth';
+import { registerDevRoutes } from './routes/dev';
+import { meRoutes } from './routes/me';
 
-/**
- * Loads the signed-in user into c.var.user, or responds 401. Passes on the refreshed session
- * cookie Better Auth issues once a day, so active members stay signed in.
- */
-const requireSession = createMiddleware<AppEnv>(async (c, next) => {
-  const { headers, response: session } = await createAuth(c.env).api.getSession({
-    headers: c.req.raw.headers,
-    returnHeaders: true,
-  });
-  if (!session) return c.json({ error: 'Not signed in' }, 401);
-  for (const cookie of headers.getSetCookie()) c.header('Set-Cookie', cookie, { append: true });
-  const { email, id, name } = session.user;
-  c.set('user', { email, id, name, status: memberStatus(session.user) });
-  return next();
-});
-
-/** Responds 403 unless the signed-in user has been approved and isn't disabled. */
-const requireMember = createMiddleware<AppEnv>(async (c, next) => {
-  if (c.var.user.status !== 'active') return c.json({ error: 'Not an active member' }, 403);
-  return next();
-});
-
-export const app = new Hono<AppEnv>().basePath('/api');
+export const app = new OpenAPIHono<AppEnv>().basePath('/api');
 
 app.use(secureHeaders(), csrf());
-app.on(['GET', 'POST'], '/auth/*', (c) => createAuth(c.env).handler(c.req.raw));
+app.route('/', authRoutes);
 
-// Vite replaces import.meta.env.DEV with false in production builds, so this route and the dev
-// module are left out of the deployed Worker entirely (scripts/check-build.sh checks for it).
-if (import.meta.env.DEV) {
-  app.post('/dev/sign-in', async (c) => (await import('./dev')).devSignIn(c));
-}
+registerDevRoutes(app);
+
+app.doc('/openapi.json', {
+  info: {
+    description: 'Authentication endpoints are managed by Better Auth under /api/auth/*.',
+    title: 'Hampset API',
+    version: '1.0.0',
+  },
+  openapi: '3.1.0',
+});
 
 app.use(requireSession);
-// Pending and disabled users can see their own status, so the app can tell them why they're
-// waiting.
-app.get('/me', (c) => c.json(c.var.user));
+app.route('/', meRoutes);
 
 // Everything below requires an active member, so new routes are protected by default.
 app.use(requireMember);

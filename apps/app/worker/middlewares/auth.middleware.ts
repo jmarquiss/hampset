@@ -1,6 +1,6 @@
 import { getDb, memberStatus, schema } from '@club/db';
-import { createMiddleware } from 'hono/factory';
 import { eq } from 'drizzle-orm';
+import { createMiddleware } from 'hono/factory';
 
 import type { AppEnv } from '../env';
 

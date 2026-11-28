@@ -67,7 +67,7 @@ describe('member access', () => {
       const me = await app.request('/api/me', { headers: user.headers }, env);
       const other = await app.request('/api/nope', { headers: user.headers }, env);
       expect({ me: await me.json(), other: other.status }).toEqual({
-        me: { email: user.email, id: user.id, name: 'Test Member', status: name },
+        me: { email: user.email, id: user.id, name: 'Test Member', roles: [], status: name },
         other: routeStatus,
       });
     },
@@ -152,7 +152,13 @@ describe('dev sign-in', () => {
   it('creates the test account as a pending sign-up once, then signs in as it', async () => {
     const first = await devSignIn();
     expect([first, await devSignIn()]).toEqual([
-      { email: DEV_EMAIL, id: expect.any(String), name: 'Test Member', status: 'pending' },
+      {
+        email: DEV_EMAIL,
+        id: expect.any(String),
+        name: 'Test Member',
+        roles: [],
+        status: 'pending',
+      },
       first,
     ]);
   });

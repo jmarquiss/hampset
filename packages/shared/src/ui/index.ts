@@ -14,3 +14,4 @@ export * from './Prose';
 export * from './Shell';
 export * from './Tabs';
 export * from './TextLink';
+export * from './Modal';

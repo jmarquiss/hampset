@@ -46,6 +46,7 @@ export async function listMembers(database: D1Database): Promise<Member[]> {
       email: true,
       id: true,
       name: true,
+      roles: true,
     },
     orderBy: (user, { asc }) => asc(user.createdAt),
   });
@@ -55,6 +56,21 @@ export async function listMembers(database: D1Database): Promise<Member[]> {
     createdAt: createdAt.toISOString(),
     status: memberStatus({ approvedAt, disabledAt }),
   }));
+}
+
+export async function updateMemberRoles(
+  database: D1Database,
+  id: string,
+  submittedRoles: Member['roles'],
+) {
+  const roles = [...new Set(submittedRoles)];
+  const [updated] = await getDb(database)
+    .update(user)
+    .set({ roles, updatedAt: new Date() })
+    .where(eq(user.id, id))
+    .returning({ id: user.id });
+
+  return Boolean(updated);
 }
 
 export type MemberActionResult =

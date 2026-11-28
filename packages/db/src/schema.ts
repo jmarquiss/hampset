@@ -20,9 +20,14 @@ export const user = sqliteTable('user', {
   approvedAt: integer('approved_at', { mode: 'timestamp_ms' }),
   /** Set when an admin disables the member; null while they have access. */
   disabledAt: integer('disabled_at', { mode: 'timestamp_ms' }),
+  /** Additive capabilities granted by an admin; kept separate from member access status. */
+  roles: text('roles', { mode: 'json' }).$type<Role[]>().notNull().default([]),
   createdAt,
   updatedAt,
 });
+
+export const roles = ['coach'] as const;
+export type Role = (typeof roles)[number];
 
 export const session = sqliteTable(
   'session',

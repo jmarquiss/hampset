@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react';
-
 import { Button, Card, DataTable, ErrorText, Loading, Tabs, type Column } from '@club/shared/ui';
+import { useState, type ReactNode } from 'react';
 
 import {
   formatDate,
@@ -9,6 +8,7 @@ import {
   type Member,
   type MemberAction,
 } from '../lib/queries';
+import { MemberModal } from './MemberModal';
 
 const statusTabs: { empty: string; label: ReactNode; status: Member['status'] }[] = [
   {
@@ -31,6 +31,8 @@ const statusTabs: { empty: string; label: ReactNode; status: Member['status'] }[
 export function MemberTable() {
   const { data, error, isLoading } = useMembers();
   const change = useMemberAction();
+
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const busy = change.isPending;
 
   const buttons = (member: Member) => {
@@ -82,10 +84,19 @@ export function MemberTable() {
     {
       // Email first: names come from Google and anyone can choose any name.
       cell: (member) => (
-        <>
-          <p className="font-semibold wrap-anywhere">{member.email}</p>
+        <div>
+          <button
+            type="button"
+            className="text-left font-semibold wrap-anywhere text-brand underline underline-offset-4"
+            onClick={() => setSelectedMember(member)}
+          >
+            {member.email}
+          </button>
           <p className="wrap-anywhere text-muted">{member.name}</p>
-        </>
+          <p className="mt-2 text-sm text-muted">
+            {member.roles.length ? `Roles: ${member.roles.join(', ')}` : 'No roles'}
+          </p>
+        </div>
       ),
       header: 'Member',
       hideStackedLabel: true,
@@ -109,6 +120,13 @@ export function MemberTable() {
 
   return (
     <Card title="Manage access">
+      {selectedMember && (
+        <MemberModal
+          key={selectedMember.id}
+          member={selectedMember}
+          onClose={() => setSelectedMember(null)}
+        />
+      )}
       <ErrorText error={error ?? change.error} />
       {isLoading && <Loading />}
       {data && (

@@ -11,3 +11,4 @@ export function getDb(d1: D1Database) {
 
 export { schema };
 export { memberStatus, statusIs, type MemberStatus } from './members';
+export { roles, type Role } from './schema';

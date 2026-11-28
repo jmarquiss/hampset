@@ -8,6 +8,13 @@
       "when": 1795190269971,
       "tag": "0000_solid_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795867200000,
+      "tag": "0001_add_user_roles",
+      "breakpoints": true
     }
   ]
 }

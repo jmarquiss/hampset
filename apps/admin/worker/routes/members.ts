@@ -1,10 +1,15 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
-import { getMembersController, memberActionController } from '../controllers/member.controller';
+import {
+  getMembersController,
+  memberActionController,
+  updateMemberRolesController,
+} from '../controllers/member.controller';
 import {
   memberActionParamsSchema,
   memberIdParamsSchema,
   memberSchema,
+  updateMemberRolesSchema,
 } from '../schemas/member.schema';
 import { createApiRouter, errorResponse } from './shared';
 
@@ -16,6 +21,21 @@ const listMembersRoute = createRoute({
       content: { 'application/json': { schema: z.array(memberSchema) } },
       description: 'Members ordered by sign-up date.',
     },
+  },
+  tags: ['Members'],
+});
+
+const updateRolesRoute = createRoute({
+  method: 'put',
+  path: '/members/{id}/roles',
+  request: {
+    body: { content: { 'application/json': { schema: updateMemberRolesSchema } }, required: true },
+    params: memberIdParamsSchema,
+  },
+  responses: {
+    204: { description: 'Member roles updated.' },
+    400: errorResponse('Invalid role list.'),
+    404: errorResponse('Member not found.'),
   },
   tags: ['Members'],
 });
@@ -47,6 +67,9 @@ const deleteMemberRoute = createRoute({
 
 export const memberRoutes = createApiRouter()
   .openapi(listMembersRoute, getMembersController)
+  .openapi(updateRolesRoute, (c) =>
+    updateMemberRolesController(c, c.req.valid('param').id, c.req.valid('json').roles),
+  )
   .openapi(memberActionRoute, (c) =>
     memberActionController(c, c.req.valid('param').id, c.req.valid('param').action),
   )

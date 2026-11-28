@@ -34,3 +34,12 @@ export function useMemberAction() {
       ),
   });
 }
+
+export function useMemberRoles() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, roles }: { id: string; roles: Member['roles'] }) =>
+      api(`/members/${id}/roles`, { method: 'PUT', body: JSON.stringify({ roles }) }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
+  });
+}

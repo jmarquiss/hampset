@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
+import { roles } from '@club/db';
 import { Button, Card, DataTable, ErrorText, Loading, Tabs, type Column } from '@club/shared/ui';
 
 import {
   formatDate,
   useMemberAction,
+  useMemberRoles,
   useMembers,
   type Member,
   type MemberAction,
@@ -31,7 +33,9 @@ const statusTabs: { empty: string; label: ReactNode; status: Member['status'] }[
 export function MemberTable() {
   const { data, error, isLoading } = useMembers();
   const change = useMemberAction();
-  const busy = change.isPending;
+  const roleChange = useMemberRoles();
+  const [editingRoles, setEditingRoles] = useState<string | null>(null);
+  const busy = change.isPending || roleChange.isPending;
 
   const buttons = (member: Member) => {
     const act = (action: MemberAction, confirmMessage?: string) => () => {
@@ -81,12 +85,46 @@ export function MemberTable() {
   const columns: Column<Member>[] = [
     {
       // Email first: names come from Google and anyone can choose any name.
-      cell: (member) => (
-        <>
-          <p className="font-semibold wrap-anywhere">{member.email}</p>
-          <p className="wrap-anywhere text-muted">{member.name}</p>
-        </>
-      ),
+      cell: (member) => {
+        const editing = editingRoles === member.id;
+        return (
+          <div>
+            <p className="font-semibold wrap-anywhere">{member.email}</p>
+            <p className="wrap-anywhere text-muted">{member.name}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {member.roles.length ? (
+                <span className="text-sm text-muted">Roles: {member.roles.join(', ')}</span>
+              ) : (
+                <span className="text-sm text-muted">No roles</span>
+              )}
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setEditingRoles(editing ? null : member.id)}
+              >
+                {editing ? 'Close roles' : 'Edit roles'}
+              </Button>
+              {editing &&
+                roles.map((role) => (
+                  <label key={role} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={member.roles.includes(role)}
+                      disabled={busy}
+                      onChange={(event) => {
+                        const next = event.target.checked
+                          ? [...member.roles, role]
+                          : member.roles.filter((current) => current !== role);
+                        roleChange.mutate({ id: member.id, roles: next });
+                      }}
+                    />
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </label>
+                ))}
+            </div>
+          </div>
+        );
+      },
       header: 'Member',
       hideStackedLabel: true,
     },
@@ -109,7 +147,7 @@ export function MemberTable() {
 
   return (
     <Card title="Manage access">
-      <ErrorText error={error ?? change.error} />
+      <ErrorText error={error ?? change.error ?? roleChange.error} />
       {isLoading && <Loading />}
       {data && (
         <Tabs
